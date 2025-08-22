@@ -1,0 +1,255 @@
+{
+  "supervised": {
+    "title": "Supervised Learning",
+    "techniques": {
+      "logistic": {
+        "name": "Logistic Regression",
+        "category": "classification",
+        "types": [
+          {"id": "binary", "name": "Binary Logistic", "description": "Two-class classification using sigmoid."},
+          {"id": "multinomial", "name": "Multinomial", "description": "Multiclass via softmax."}
+        ],
+        "hyperparameters": [
+          {"key": "penalty", "desc": "Regularization: l1, l2, elasticnet, none."},
+          {"key": "C", "desc": "Inverse of regularization strength."},
+          {"key": "solver", "desc": "Optimization algorithm (liblinear, lbfgs, saga)."}
+        ],
+        "advantages": ["Probabilistic outputs", "Interpretable coefficients", "Fast to train"],
+        "disadvantages": ["Assumes linear decision boundary", "Sensitive to outliers", "Needs feature scaling"],
+        "uses": ["Credit scoring", "Medical diagnosis", "Spam detection"],
+        "math": {
+          "hypothesis": "h_\\theta(x) = \\sigma(\\theta^T x) = \\frac{1}{1+e^{-\\theta^T x}}",
+          "loss": "J(\\theta) = - \\frac{1}{m} \\sum_{i=1}^m [y^{(i)} \\log h_\\theta(x^{(i)}) + (1-y^{(i)}) \\log (1-h_\\theta(x^{(i)}))]"
+        },
+        "metrics": {"classification": ["accuracy", "precision", "recall", "f1", "auc"]},
+        "examples": {"confusion_matrix": [[90, 12], [8, 70]]}
+      },
+      "knn": {
+        "name": "K-Nearest Neighbors (KNN)",
+        "category": "classification",
+        "types": [
+          {"id": "classifier", "name": "KNN Classifier", "description": "Majority vote among k neighbors."},
+          {"id": "regressor", "name": "KNN Regressor", "description": "Average of k nearest targets."}
+        ],
+        "hyperparameters": [
+          {"key": "n_neighbors", "desc": "Number of neighbors (k)."},
+          {"key": "weights", "desc": "Uniform or distance-weighted voting."},
+          {"key": "metric", "desc": "Distance metric (euclidean, manhattan, minkowski)."}
+        ],
+        "advantages": ["Simple and effective", "No training step", "Works with non-linear boundaries"],
+        "disadvantages": ["Slow at inference for large datasets", "Sensitive to feature scaling", "Curse of dimensionality"],
+        "uses": ["Recommendation systems", "Anomaly detection", "Pattern recognition"],
+        "math": {"distance": "d(x, x') = ( \\sum_i |x_i - x'_i|^p )^{1/p}"},
+        "metrics": {"classification": ["accuracy", "precision", "recall", "f1"]},
+        "examples": {"confusion_matrix": [[55, 15], [10, 40]]}
+      },
+      "decision_tree": {
+        "name": "Decision Trees",
+        "category": "classification",
+        "types": [
+          {"id": "gini", "name": "Gini Impurity", "description": "Split based on minimizing Gini impurity."},
+          {"id": "entropy", "name": "Information Gain", "description": "Split based on maximizing information gain."}
+        ],
+        "hyperparameters": [
+          {"key": "max_depth", "desc": "Maximum depth of the tree."},
+          {"key": "min_samples_split", "desc": "Minimum samples to split a node."},
+          {"key": "criterion", "desc": "Split criterion: gini or entropy."}
+        ],
+        "advantages": ["Interpretable", "Handles non-linear relationships", "Little preprocessing required"],
+        "disadvantages": ["Prone to overfitting", "Unstable to small data changes", "Biased with imbalanced classes"],
+        "uses": ["Credit approval", "Churn prediction", "Medical triage"],
+        "math": {
+          "gini": "G(t) = 1 - \\sum_k p_{k}^2",
+          "entropy": "H(t) = - \\sum_k p_k \\log_2 p_k",
+          "info_gain": "IG = H(parent) - \\sum_j \\frac{N_j}{N} H(child_j)"
+        },
+        "metrics": {"classification": ["accuracy", "precision", "recall", "f1"]},
+        "examples": {"confusion_matrix": [[60, 12], [14, 34]]}
+      },
+      "svm": {
+        "name": "Support Vector Machines (SVM)",
+        "category": "both",
+        "types": [
+          {"id": "svc", "name": "Support Vector Classification (SVC)", "description": "Binary and multiclass classification using maximum-margin hyperplanes."},
+          {"id": "svr", "name": "Support Vector Regression (SVR)", "description": "Regression using epsilon-insensitive loss and margin."}
+        ],
+        "kernels": [
+          {"id": "linear", "name": "Linear", "formula": "k(x, x') = x^T x'"},
+          {"id": "rbf", "name": "RBF (Gaussian)", "formula": "k(x, x') = \\exp(-\\gamma \\|x-x'\\|^2)"},
+          {"id": "poly", "name": "Polynomial", "formula": "k(x, x') = (\\gamma x^T x' + r)^d"},
+          {"id": "sigmoid", "name": "Sigmoid", "formula": "k(x, x') = \\tanh(\\gamma x^T x' + r)"}
+        ],
+        "hyperparameters": [
+          {"key": "C", "desc": "Regularization strength; smaller values specify stronger regularization."},
+          {"key": "kernel", "desc": "Kernel function to transform data into higher dimensions."},
+          {"key": "gamma", "desc": "Kernel coefficient for RBF, poly, and sigmoid."},
+          {"key": "degree", "desc": "Degree of the polynomial kernel function (poly)."},
+          {"key": "epsilon", "desc": "Epsilon tube for SVR; no penalty for errors within epsilon."}
+        ],
+        "advantages": ["Effective in high dimensional spaces", "Works well with clear margin of separation", "Versatile via different kernels"],
+        "disadvantages": ["Not scalable to very large datasets", "Sensitive to kernel/hyperparameters", "Less interpretable than linear models"],
+        "uses": ["Text classification", "Image classification", "Time-series regression (SVR)"],
+        "math": {
+          "objective_svc": "\\min_{w,b,\\xi} \\; \\frac{1}{2} \\|w\\|^2 + C \\sum_i \\xi_i \\; \\text{s.t.} \\; y_i(w^T \\phi(x_i)+b) \\ge 1- \\xi_i, \\; \\xi_i \\ge 0",
+          "decision_fn": "f(x) = \\text{sign}\\left( \\sum_i \\alpha_i y_i k(x_i, x) + b \\right)",
+          "objective_svr": "\\min_{w,b,\\xi, \\xi^*} \\; \\frac{1}{2} \\|w\\|^2 + C \\sum_i (\\xi_i + \\xi_i^*) \\; \\text{s.t.} \\; |y_i - (w^T \\phi(x_i)+b)| \\le \\epsilon + \\xi_i"
+        },
+        "metrics": {"classification": ["accuracy", "precision", "recall", "f1"], "regression": ["mae", "mse", "rmse", "r2"]},
+        "examples": {
+          "confusion_matrix": [[50, 10],[8, 32]],
+          "svr_sample": {"x": [-3,-2.5,-2,-1.5,-1,-0.5,0,0.5,1,1.5,2,2.5,3], "y": [-8.5,-5.8,-3.8,-2.1,-1.1,-0.6,0,0.6,1.2,2.4,4.1,6.1,8.9]}
+        }
+      },
+      "linear_regression": {
+        "name": "Linear Regression",
+        "category": "regression",
+        "types": [
+          {"id": "ols", "name": "Ordinary Least Squares", "description": "Minimizes squared errors."},
+          {"id": "ridge", "name": "Ridge (L2)", "description": "L2-regularized regression."},
+          {"id": "lasso", "name": "Lasso (L1)", "description": "L1-regularized regression with sparsity."}
+        ],
+        "hyperparameters": [
+          {"key": "fit_intercept", "desc": "Whether to fit the intercept."},
+          {"key": "alpha", "desc": "Regularization strength (Ridge/Lasso)."}
+        ],
+        "advantages": ["Interpretable", "Fast", "Works well with linearly separable data"],
+        "disadvantages": ["Sensitive to outliers", "Assumes linearity", "Multicollinearity issues"],
+        "uses": ["Forecasting", "Econometrics", "Risk modeling"],
+        "math": {
+          "closed_form": "\\hat{\\beta} = (X^T X)^{-1} X^T y",
+          "loss": "J(\\beta) = \\frac{1}{2m} \\sum_i (h_\\beta(x^{(i)}) - y^{(i)})^2"
+        },
+        "metrics": {"regression": ["mae", "mse", "rmse", "r2"]},
+        "examples": {"residuals": {"y_true": [2,3,4,5,6,7,8], "y_pred": [1.8,3.1,4.2,4.9,6.2,6.8,8.1]}}
+      },
+      "random_forest": {
+        "name": "Random Forest",
+        "category": "both",
+        "types": [
+          {"id": "classifier", "name": "RF Classifier", "description": "Ensemble of decision trees (bagging)."},
+          {"id": "regressor", "name": "RF Regressor", "description": "Ensemble for regression."}
+        ],
+        "hyperparameters": [
+          {"key": "n_estimators", "desc": "Number of trees."},
+          {"key": "max_depth", "desc": "Maximum tree depth."},
+          {"key": "max_features", "desc": "Features considered per split."}
+        ],
+        "advantages": ["Robust to overfitting", "Handles non-linearities", "Feature importance"],
+        "disadvantages": ["Less interpretable", "Larger model size", "Slower inference than single tree"],
+        "uses": ["Tabular classification", "Feature ranking", "Imbalanced data handling"],
+        "math": {"bagging": "Bootstrap aggregating: sample with replacement; average/vote predictions."},
+        "metrics": {"classification": ["accuracy", "precision", "recall", "f1"], "regression": ["mae", "mse", "rmse", "r2"]},
+        "examples": {"confusion_matrix": [[95, 7],[5, 83]]}
+      },
+      "naive_bayes": {
+        "name": "Naive Bayes",
+        "category": "classification",
+        "types": [
+          {"id": "gaussian", "name": "Gaussian NB", "description": "Continuous features with normal distribution."},
+          {"id": "multinomial", "name": "Multinomial NB", "description": "Counts/TF for text classification."},
+          {"id": "bernoulli", "name": "Bernoulli NB", "description": "Binary features."}
+        ],
+        "hyperparameters": [
+          {"key": "var_smoothing", "desc": "Stability for Gaussian NB."},
+          {"key": "alpha", "desc": "Additive smoothing for Multinomial/Bernoulli."}
+        ],
+        "advantages": ["Fast and simple", "Works well for text", "Probabilistic outputs"],
+        "disadvantages": ["Strong independence assumption", "Limited expressiveness", "Sensitive to zero probabilities"],
+        "uses": ["Spam filtering", "Sentiment analysis", "Document classification"],
+        "math": {"bayes": "P(y|x) \\propto P(y) \\prod_i P(x_i|y)"},
+        "metrics": {"classification": ["accuracy", "precision", "recall", "f1"]},
+        "examples": {"confusion_matrix": [[88, 22],[14, 76]]}
+      },
+      "gradient_boosting": {
+        "name": "Gradient Boosting",
+        "category": "both",
+        "types": [
+          {"id": "gbc", "name": "GB Classifier", "description": "Boosted trees for classification."},
+          {"id": "gbr", "name": "GB Regressor", "description": "Boosted trees for regression."}
+        ],
+        "hyperparameters": [
+          {"key": "learning_rate", "desc": "Shrinkage factor for each tree."},
+          {"key": "n_estimators", "desc": "Number of boosting stages."},
+          {"key": "max_depth", "desc": "Depth of individual trees."}
+        ],
+        "advantages": ["High accuracy", "Handles mixed features", "Flexible loss functions"],
+        "disadvantages": ["Sensitive to hyperparameters", "Longer training time", "Risk of overfitting"],
+        "uses": ["Tabular ML competitions", "Ranking problems", "Risk scoring"],
+        "math": {"boost": "F_m(x) = F_{m-1}(x) + \\nu \\cdot h_m(x); \\; h_m \\; fits negative gradient of loss."},
+        "metrics": {"classification": ["accuracy", "precision", "recall", "f1"], "regression": ["mae", "mse", "rmse", "r2"]},
+        "examples": {"confusion_matrix": [[98, 5],[7, 88]]}
+      }
+    }
+  },
+  "unsupervised": {
+    "title": "Unsupervised Learning",
+    "techniques": {
+      "kmeans": {
+        "name": "K-Means Clustering",
+        "category": "clustering",
+        "types": [{"id": "lloyd", "name": "Lloyd's Algorithm", "description": "Standard iterative refinement."}],
+        "hyperparameters": [
+          {"key": "n_clusters", "desc": "Number of clusters (k)."},
+          {"key": "init", "desc": "Initialization method (k-means++, random)."},
+          {"key": "max_iter", "desc": "Maximum iterations."}
+        ],
+        "advantages": ["Simple and fast", "Scales to large datasets", "Easy to interpret"],
+        "disadvantages": ["Requires k", "Assumes spherical clusters", "Sensitive to initialization"],
+        "uses": ["Customer segmentation", "Image compression", "Anomaly detection"],
+        "math": {"objective": "\\min_{C, \\{\\mu_i\\}} \\sum_{i=1}^{k} \\sum_{x \\in C_i} \\|x - \\mu_i\\|^2"},
+        "metrics": {"clustering": ["inertia", "silhouette"]},
+        "examples": {
+          "elbow": {"k": [1,2,3,4,5,6,7,8,9,10], "inertia": [1200,630,420,330,290,260,245,238,235,233]},
+          "clusters2d": {"x": [-2,-1.8,-2.2,1.9,2.1,2.2], "y": [0.2,-0.4,0.5,1.9,2.2,1.6], "labels": [0,0,0,1,1,1]}
+        }
+      },
+      "pca": {
+        "name": "Principal Component Analysis (PCA)",
+        "category": "dim_reduction",
+        "types": [{"id": "svd", "name": "SVD-based PCA", "description": "Singular value decomposition."}],
+        "hyperparameters": [
+          {"key": "n_components", "desc": "Number of components to keep."},
+          {"key": "whiten", "desc": "Whiten components (optional)."}
+        ],
+        "advantages": ["Reduces dimensionality", "De-correlates features", "Improves learning speed"],
+        "disadvantages": ["Loss of interpretability", "Linear method", "Sensitive to scaling"],
+        "uses": ["Preprocessing", "Visualization", "Noise reduction"],
+        "math": {"eigendecomp": "\\Sigma = Q \\Lambda Q^T", "variance": "Explained\\;variance: \\; \\lambda_i / \\sum_j \\lambda_j"},
+        "metrics": {"pca": ["explained_variance_ratio"]},
+        "examples": {"explained": {"components": [1,2,3,4,5], "variance": [0.52, 0.21, 0.12, 0.09, 0.06]}}
+      },
+      "dbscan": {
+        "name": "DBSCAN",
+        "category": "clustering",
+        "types": [{"id": "core-border-noise", "name": "Core/Border/Noise", "description": "Density-based clustering with noise handling."}],
+        "hyperparameters": [
+          {"key": "eps", "desc": "Neighborhood radius."},
+          {"key": "min_samples", "desc": "Min points to form a dense region."}
+        ],
+        "advantages": ["Finds arbitrary-shaped clusters", "Identifies noise", "No need for k"],
+        "disadvantages": ["Struggles with varying densities", "Parameter sensitivity"],
+        "uses": ["Geospatial clustering", "Anomaly detection", "Image segmentation"],
+        "math": {"density": "Core point if |N_\\epsilon(x)| \\ge minPts"},
+        "metrics": {"clustering": ["silhouette"]},
+        "examples": {"clusters2d": {"x": [-2,-1.7,-2.1,2.2,2.1,2.3], "y": [0.1,-0.6,0.4,1.8,2.1,1.7], "labels": [0,0,0,1,1,1]}}
+      },
+      "hierarchical": {
+        "name": "Agglomerative Clustering",
+        "category": "clustering",
+        "types": [
+          {"id": "linkage", "name": "Linkage", "description": "Single, complete, average, ward."}
+        ],
+        "hyperparameters": [
+          {"key": "n_clusters", "desc": "Number of clusters."},
+          {"key": "linkage", "desc": "Linkage criterion."}
+        ],
+        "advantages": ["Hierarchical view (dendrogram)", "No need to pre-specify k (full tree)"],
+        "disadvantages": ["O(n^2) memory/time", "Irreversible merges"],
+        "uses": ["Document clustering", "Bioinformatics", "Market segmentation"],
+        "math": {"ward": "Minimize increase in total within-cluster variance."},
+        "metrics": {"clustering": ["silhouette"]},
+        "examples": {"clusters2d": {"x": [-1.9,-2.1,-2.2,2.0,2.3,2.1], "y": [0.3,-0.5,0.4,2.2,2.1,1.5], "labels": [0,0,0,1,1,1]}}
+      }
+    }
+  }
+}

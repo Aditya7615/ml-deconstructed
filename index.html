@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Deconstructed - Interactive Learning Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3); }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-gray-800/90 backdrop-blur-sm z-50 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl font-bold text-blue-400">ML Deconstructed</h1>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#home" class="nav-link text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                        <div class="relative group">
+                            <button class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Statistics</button>
+                            <div class="absolute left-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                <a href="#data-cleaning" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Data Cleaning</a>
+                                <a href="#data-preprocessing" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Data Preprocessing</a>
+                                <a href="#descriptive-stats" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Descriptive Statistics</a>
+                                <a href="#hypothesis-testing" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Hypothesis Testing</a>
+                            </div>
+                        </div>
+                        <div class="relative group">
+                            <button class="text-gray-300 hover:text-blue-400 px-3 py-2 rounded-md text-sm font-medium">Algorithms</button>
+                            <div class="absolute left-0 mt-2 w-48 bg-gray-800 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                <div class="px-4 py-2 text-xs text-gray-500 uppercase tracking-wide">Supervised Learning</div>
+                                <a href="#logistic-regression" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Logistic Regression</a>
+                                <a href="#knn" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">K-Nearest Neighbors</a>
+                                <a href="#decision-trees" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Decision Trees</a>
+                                <a href="#svm" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Support Vector Machines</a>
+                                <a href="#linear-regression" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Linear Regression</a>
+                                <div class="px-4 py-2 text-xs text-gray-500 uppercase tracking-wide">Unsupervised Learning</div>
+                                <a href="#kmeans" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">K-Means Clustering</a>
+                                <a href="#pca" class="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700">Principal Component Analysis</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Modal for algorithm details -->
+    <div id="algo-modal" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+        <div class="bg-gray-900 border border-gray-700 rounded-xl w-11/12 max-w-5xl max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                <h3 id="algo-modal-title" class="text-xl font-semibold text-blue-400">Algorithm Details</h3>
+                <button id="algo-modal-close" class="text-gray-400 hover:text-gray-200">✕</button>
+            </div>
+            <div id="algo-modal-content" class="p-6 space-y-6">
+                <!-- dynamic content injected by script.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="pt-16">
+        <!-- Home Section -->
+        <section id="home" class="gradient-bg min-h-screen flex items-center">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="text-center">
+                    <h1 class="text-5xl md:text-7xl font-bold text-white mb-6">
+                        ML <span class="text-blue-400">Deconstructed</span>
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto">
+                        Master machine learning through intuitive explanations, hands-on code, and interactive visualizations. 
+                        From theory to practice, we break down complex algorithms into simple, understandable components.
+                    </p>
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <a href="#statistics" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                            Start Learning
+                        </a>
+                        <a href="#algorithms" class="bg-gray-700 hover:bg-gray-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                            Explore Algorithms
+                        </a>
+                        <a href="https://github.com/Aditya7615/Machine-Learning-Toolkit" target="_blank" rel="noopener" class="bg-gray-800 hover:bg-gray-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors border border-gray-600">
+                            GitHub: ML Toolkit
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Algorithms Section -->
+        <section class="py-20 bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-12">Featured Algorithms</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover">
+                        <h3 class="text-xl font-semibold mb-3 text-blue-400">Logistic Regression</h3>
+                        <p class="text-gray-300 mb-4">Binary classification using probability and the sigmoid function</p>
+                        <a href="#logistic-regression" class="text-blue-400 hover:text-blue-300">Learn More →</a>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover">
+                        <h3 class="text-xl font-semibold mb-3 text-blue-400">K-Nearest Neighbors</h3>
+                        <p class="text-gray-300 mb-4">Simple classification based on similarity to training examples</p>
+                        <a href="#knn" class="text-blue-400 hover:text-blue-300">Learn More →</a>
+                    </div>
+                    <div class="bg-gray-700 rounded-lg p-6 card-hover">
+                        <h3 class="text-xl font-semibold mb-3 text-blue-400">Decision Trees</h3>
+                        <p class="text-gray-300 mb-4">Tree-like model for classification and regression decisions</p>
+                        <a href="#decision-trees" class="text-blue-400 hover:text-blue-300">Learn More →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics Section -->
+        <section id="statistics" class="py-20 bg-gray-900">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-12">Foundation: Statistics</h2>
+                
+                <!-- Data Cleaning -->
+                <div id="data-cleaning" class="mb-16">
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-400">Data Cleaning</h3>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <p class="text-gray-300 mb-4">
+                            Data cleaning is the process of detecting and correcting (or removing) corrupt or inaccurate records from a dataset.
+                        </p>
+                        <div class="bg-gray-700 rounded p-4 mb-4">
+                            <h4 class="font-semibold mb-2">Key Techniques:</h4>
+                            <ul class="list-disc list-inside text-gray-300 space-y-1">
+                                <li>Handling missing values (imputation, deletion)</li>
+                                <li>Detecting and treating outliers</li>
+                                <li>Removing duplicates</li>
+                                <li>Fixing data type inconsistencies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Preprocessing -->
+                <div id="data-preprocessing" class="mb-16">
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-400">Data Preprocessing</h3>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <p class="text-gray-300 mb-4">
+                            Data preprocessing transforms raw data into a format that is more suitable for machine learning algorithms.
+                        </p>
+                        <div class="bg-gray-700 rounded p-4 mb-4">
+                            <h4 class="font-semibold mb-2">Common Methods:</h4>
+                            <ul class="list-disc list-inside text-gray-300 space-y-1">
+                                <li>Feature scaling (StandardScaler, MinMaxScaler)</li>
+                                <li>Normalization</li>
+                                <li>Categorical encoding (One-Hot, Label)</li>
+                                <li>Feature selection</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Descriptive Statistics -->
+                <div id="descriptive-stats" class="mb-16">
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-400">Descriptive Statistics</h3>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <p class="text-gray-300 mb-4">
+                            Descriptive statistics summarize and describe the main features of a dataset.
+                        </p>
+                        <div class="bg-gray-700 rounded p-4 mb-4">
+                            <h4 class="font-semibold mb-2">Key Measures:</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <h5 class="font-medium text-blue-300">Central Tendency:</h5>
+                                    <ul class="list-disc list-inside text-gray-300 text-sm">
+                                        <li>Mean: <span class="katex">\(\bar{x} = \frac{1}{n}\sum_{i=1}^{n} x_i\)</span></li>
+                                        <li>Median: Middle value</li>
+                                        <li>Mode: Most frequent value</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h5 class="font-medium text-blue-300">Variability:</h5>
+                                    <ul class="list-disc list-inside text-gray-300 text-sm">
+                                        <li>Variance: <span class="katex">\(s^2 = \frac{1}{n-1}\sum_{i=1}^{n} (x_i - \bar{x})^2\)</span></li>
+                                        <li>Standard Deviation: <span class="katex">\(s = \sqrt{s^2}\)</span></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hypothesis Testing -->
+                <div id="hypothesis-testing" class="mb-16">
+                    <h3 class="text-2xl font-semibold mb-6 text-blue-400">Hypothesis Testing</h3>
+                    <div class="bg-gray-800 rounded-lg p-6">
+                        <p class="text-gray-300 mb-4">
+                            Hypothesis testing is a statistical method used to make inferences about a population based on sample data.
+                        </p>
+                        <div class="bg-gray-700 rounded p-4 mb-4">
+                            <h4 class="font-semibold mb-2">Z-Test Example:</h4>
+                            <p class="text-gray-300 mb-2">For testing population mean when σ is known:</p>
+                            <div class="text-center">
+                                <span class="katex">\(Z = \frac{\bar{x} - \mu_0}{\sigma/\sqrt{n}}\)</span>
+                            </div>
+                            <p class="text-gray-300 mt-2 text-sm">
+                                Where: <span class="katex">\(\bar{x}\)</span> is sample mean, <span class="katex">\(\mu_0\)</span> is hypothesized mean, 
+                                <span class="katex">\(\sigma\)</span> is population standard deviation, and <span class="katex">\(n\)</span> is sample size.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Algorithms Section -->
+        <section id="algorithms" class="py-20 bg-gray-800">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center mb-12">Machine Learning Algorithms</h2>
+                
+                <!-- Supervised Learning -->
+                <div class="mb-16">
+                    <h3 class="text-2xl font-semibold mb-8 text-green-400">Supervised Learning</h3>
+                    
+                    <!-- Logistic Regression -->
+                    <div id="logistic-regression" class="mb-16">
+                        <h4 class="text-xl font-semibold mb-6 text-blue-400">Logistic Regression</h4>
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Intuition</h5>
+                                    <p class="text-gray-300 mb-4">
+                                        Think of logistic regression as a smart way to make yes/no decisions. It's like having a friend who's really good at predicting 
+                                        whether you'll like a movie based on your preferences. Instead of giving you a specific rating, they give you a probability 
+                                        (like "80% chance you'll enjoy it").
+                                    </p>
+                                    
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Mathematics</h5>
+                                    <p class="text-gray-300 mb-2">The sigmoid function transforms any input to a probability between 0 and 1:</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(\sigma(z) = \frac{1}{1 + e^{-z}}\)</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-2">Where z is the linear combination of features:</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(z = \beta_0 + \beta_1x_1 + \beta_2x_2 + ... + \beta_nx_n\)</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">Python Implementation</h5>
+                                    <div class="bg-gray-800 rounded p-4">
+                                        <pre class="text-sm text-green-400 overflow-x-auto"><code>import numpy as np
+import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report
+
+# Load Titanic dataset
+titanic = pd.read_csv('titanic.csv')
+X = titanic[['Age', 'Fare', 'Pclass']].fillna(titanic['Age'].median())
+y = titanic['Survived']
+
+# Split data
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train model
+model = LogisticRegression(random_state=42)
+model.fit(X_train, y_train)
+
+# Predictions
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.3f}")</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8">
+                                <h5 class="font-semibold mb-3 text-yellow-400">Visualization</h5>
+                                <div id="logistic-viz" class="bg-gray-800 rounded p-4 h-64 flex items-center justify-center">
+                                    <p class="text-gray-500">Interactive visualization will be loaded here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- K-Nearest Neighbors -->
+                    <div id="knn" class="mb-16">
+                        <h4 class="text-xl font-semibold mb-6 text-blue-400">K-Nearest Neighbors (KNN)</h4>
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Intuition</h5>
+                                    <p class="text-gray-300 mb-4">
+                                        KNN is like asking your neighbors for advice. If you're trying to decide whether to watch a movie, you ask the 5 people 
+                                        closest to you (your "k=5 nearest neighbors") who have similar taste. If 3 of them liked it, you probably will too!
+                                    </p>
+                                    
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Mathematics</h5>
+                                    <p class="text-gray-300 mb-2">Distance calculation (Euclidean distance):</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(d(x,y) = \sqrt{\sum_{i=1}^{n} (x_i - y_i)^2}\)</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-2">Classification rule:</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(y_{pred} = \text{majority class of k nearest neighbors}\)</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">Python Implementation</h5>
+                                    <div class="bg-gray-800 rounded p-4">
+                                        <pre class="text-sm text-green-400 overflow-x-auto"><code>from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+
+# Scale features (important for KNN)
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Train KNN
+knn = KNeighborsClassifier(n_neighbors=5)
+knn.fit(X_scaled, y)
+
+# Predictions
+y_pred_knn = knn.predict(X_scaled)
+accuracy_knn = accuracy_score(y, y_pred_knn)
+print(f"KNN Accuracy: {accuracy_knn:.3f}")</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Decision Trees -->
+                    <div id="decision-trees" class="mb-16">
+                        <h4 class="text-xl font-semibold mb-6 text-blue-400">Decision Trees</h4>
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Intuition</h5>
+                                    <p class="text-gray-300 mb-4">
+                                        Decision trees are like playing a game of "20 Questions" to classify something. You start with a broad question 
+                                        (like "Is it bigger than a breadbox?") and based on the answer, you ask more specific questions until you can 
+                                        make a confident prediction.
+                                    </p>
+                                    
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Mathematics</h5>
+                                    <p class="text-gray-300 mb-2">Information Gain (using entropy):</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(IG(S,A) = H(S) - \sum_{v \in Values(A)} \frac{|S_v|}{|S|} H(S_v)\)</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-2">Where entropy is:</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(H(S) = -\sum_{i=1}^{c} p_i \log_2(p_i)\)</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">Python Implementation</h5>
+                                    <div class="bg-gray-800 rounded p-4">
+                                        <pre class="text-sm text-green-400 overflow-x-auto"><code>from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import plot_tree
+import matplotlib.pyplot as plt
+
+# Train Decision Tree
+dt = DecisionTreeClassifier(max_depth=3, random_state=42)
+dt.fit(X_train, y_train)
+
+# Visualize the tree
+plt.figure(figsize=(12,8))
+plot_tree(dt, feature_names=X.columns, 
+         class_names=['Not Survived', 'Survived'],
+         filled=True, rounded=True)
+plt.show()
+
+# Predictions
+y_pred_dt = dt.predict(X_test)
+accuracy_dt = accuracy_score(y_test, y_pred_dt)
+print(f"Decision Tree Accuracy: {accuracy_dt:.3f}")</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Linear Regression -->
+                    <div id="linear-regression" class="mb-16">
+                        <h4 class="text-xl font-semibold mb-6 text-blue-400">Linear Regression</h4>
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Intuition</h5>
+                                    <p class="text-gray-300 mb-4">
+                                        Linear regression is like finding the best straight line through a scatter plot. It's similar to drawing a trend line 
+                                        that shows the general relationship between two variables - like how house prices generally increase with square footage.
+                                    </p>
+                                    
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Mathematics</h5>
+                                    <p class="text-gray-300 mb-2">Linear equation:</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(y = \beta_0 + \beta_1x_1 + \beta_2x_2 + ... + \beta_nx_n\)</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-2">Cost function (Mean Squared Error):</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(J(\beta) = \frac{1}{2m} \sum_{i=1}^{m} (h_\beta(x^{(i)}) - y^{(i)})^2\)</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">Python Implementation</h5>
+                                    <div class="bg-gray-800 rounded p-4">
+                                        <pre class="text-sm text-green-400 overflow-x-auto"><code>from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Train Linear Regression
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+
+# Predictions
+y_pred_lr = lr.predict(X_test)
+
+# Evaluate model
+mse = mean_squared_error(y_test, y_pred_lr)
+r2 = r2_score(y_test, y_pred_lr)
+print(f"Mean Squared Error: {mse:.3f}")
+print(f"R² Score: {r2:.3f}")
+
+# Coefficients
+print(f"Intercept: {lr.intercept_:.3f}")
+for i, coef in enumerate(lr.coef_):
+    print(f"Coefficient {i+1}: {coef:.3f}")</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Unsupervised Learning -->
+                <div class="mb-16">
+                    <h3 class="text-2xl font-semibold mb-8 text-purple-400">Unsupervised Learning</h3>
+                    
+                    <!-- K-Means Clustering -->
+                    <div id="kmeans" class="mb-16">
+                        <h4 class="text-xl font-semibold mb-6 text-blue-400">K-Means Clustering</h4>
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Intuition</h5>
+                                    <p class="text-gray-300 mb-4">
+                                        K-means is like organizing a party where you need to group people by similar interests. You start by randomly placing 
+                                        "interest centers" around the room, then everyone moves to the center closest to them. You keep adjusting the centers 
+                                        until everyone is happy with their group!
+                                    </p>
+                                    
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Mathematics</h5>
+                                    <p class="text-gray-300 mb-2">Objective function (minimize within-cluster variance):</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(\min \sum_{i=1}^{k} \sum_{x \in C_i} \|x - \mu_i\|^2\)</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-2">Where <span class="katex">\(\mu_i\)</span> is the centroid of cluster <span class="katex">\(C_i\)</span></p>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">Python Implementation</h5>
+                                    <div class="bg-gray-800 rounded p-4">
+                                        <pre class="text-sm text-green-400 overflow-x-auto"><code>from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Perform K-means clustering
+kmeans = KMeans(n_clusters=3, random_state=42)
+clusters = kmeans.fit_predict(X_scaled)
+
+# Visualize clusters
+plt.scatter(X_scaled[:, 0], X_scaled[:, 1], c=clusters, cmap='viridis')
+plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], 
+           s=200, c='red', marker='x', linewidths=3)
+plt.title('K-Means Clustering Results')
+plt.show()</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Principal Component Analysis -->
+                    <div id="pca" class="mb-16">
+                        <h4 class="text-xl font-semibold mb-6 text-blue-400">Principal Component Analysis (PCA)</h4>
+                        <div class="bg-gray-700 rounded-lg p-6">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Intuition</h5>
+                                    <p class="text-gray-300 mb-4">
+                                        PCA is like taking a photo from different angles to find the most flattering view. Instead of looking at data from 
+                                        many dimensions, PCA finds the "best angles" (principal components) that show the most important patterns while 
+                                        reducing complexity.
+                                    </p>
+                                    
+                                    <h5 class="font-semibold mb-3 text-yellow-400">The Mathematics</h5>
+                                    <p class="text-gray-300 mb-2">Eigenvalue decomposition:</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(\Sigma = Q\Lambda Q^T\)</span>
+                                    </div>
+                                    <p class="text-gray-300 mb-2">Where <span class="katex">\(\Sigma\)</span> is the covariance matrix, <span class="katex">\(Q\)</span> contains eigenvectors, and <span class="katex">\(\Lambda\)</span> contains eigenvalues</p>
+                                    <p class="text-gray-300 mb-2">Variance explained by component i:</p>
+                                    <div class="text-center mb-4">
+                                        <span class="katex">\(\frac{\lambda_i}{\sum_{j=1}^{d} \lambda_j}\)</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h5 class="font-semibold mb-3 text-yellow-400">Python Implementation</h5>
+                                    <div class="bg-gray-800 rounded p-4">
+                                        <pre class="text-sm text-green-400 overflow-x-auto"><code>from sklearn.decomposition import PCA
+import numpy as np
+
+# Apply PCA
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
+
+# Explained variance ratio
+print(f"Explained variance ratio: {pca.explained_variance_ratio_}")
+print(f"Total variance explained: {np.sum(pca.explained_variance_ratio_):.3f}")
+
+# Visualize PCA results
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='viridis')
+plt.xlabel(f'PC1 ({pca.explained_variance_ratio_[0]:.1%} variance)')
+plt.ylabel(f'PC2 ({pca.explained_variance_ratio_[1]:.1%} variance)')
+plt.title('PCA: First Two Principal Components')
+plt.show()</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 py-8 border-t border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-400">&copy; 2024 ML Deconstructed. Built with ❤️ for the ML community. 
+                <a href="https://github.com/Aditya7615/Machine-Learning-Toolkit" target="_blank" rel="noopener" class="text-blue-400 hover:text-blue-300 underline">More details in the ML Toolkit repo</a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Attach data attributes to SVM link if present
+        window.addEventListener('DOMContentLoaded', () => {
+            const svmLink = document.querySelector('a[href="#svm"]');
+            if (svmLink) {
+                svmLink.setAttribute('data-tech', 'svm');
+                svmLink.classList.add('algo-link');
+            }
+        });
+    </script>
+</body>
+</html>
